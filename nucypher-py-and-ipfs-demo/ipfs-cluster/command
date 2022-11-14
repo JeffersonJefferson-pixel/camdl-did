@@ -1,0 +1,3 @@
+go get -u github.com/Kubuxu/go-ipfs-swarm-key-gen/ipfs-swarm-key-gen
+
+od -vN 32 -An -tx1 /dev/urandom | tr -d ' \n'  
