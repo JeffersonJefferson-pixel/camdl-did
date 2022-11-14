@@ -1,7 +1,9 @@
 ### Instruction
 
 Pre-requistes:
-- Install Nucypher (might need wsl for window)
+- Install Nucypher with pip (might need wsl for window)
+        
+        pip3 install -U nucypher
 
 1. Up ipfs
     1. go to `ipfs-cluster`
