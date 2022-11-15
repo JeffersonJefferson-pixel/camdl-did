@@ -3,3 +3,7 @@ nucypher_env/
 compose/
 
 None/
+
+.env
+
+node_modules/
