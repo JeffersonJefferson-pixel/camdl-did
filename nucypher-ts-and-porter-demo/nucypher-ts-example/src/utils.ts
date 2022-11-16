@@ -1,6 +1,9 @@
 export const toBytes = (str: string): Uint8Array =>
   new TextEncoder().encode(str);
 
+export const fromBytes = (bytes: Uint8Array): string =>
+  new TextDecoder().decode(bytes);
+
 export const fromHexString = (hexString: string): Uint8Array => {
   const matches = hexString.match(/.{1,2}/g) ?? [];
   return new Uint8Array(matches.map((byte) => parseInt(byte, 16)));

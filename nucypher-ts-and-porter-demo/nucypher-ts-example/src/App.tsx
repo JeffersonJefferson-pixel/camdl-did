@@ -1,13 +1,11 @@
-import { Alice, Bob, EnactedPolicy, SecretKey, Enrico, MessageKit } from '@nucypher/nucypher-ts';
+import { Alice, Bob, EnactedPolicy, SecretKey, Enrico, MessageKit, RemoteBob, BlockchainPolicyParameters } from '@nucypher/nucypher-ts';
 import { ethers } from 'ethers';
 import React from 'react';
 import { useEffect, useState } from 'react';
 import { create, IPFSHTTPClient } from 'ipfs-http-client';
-import { fromHexString, toBytes } from './utils';
+import { fromBase64, toBase64, toBytes, fromBytes } from './utils';
 
 declare let window: any;
-
-const gatewayUrl = process.env.GATEWAY_URL
 
 function toHexString(byteArray: Uint8Array) {
   return Array.from(byteArray, function (byte) {
@@ -44,35 +42,38 @@ export function App() {
 
   let onChange = async (e: any) =>{
     // preview
-    const file = e.target.files[0]
-    let blob = URL.createObjectURL(file)
-    setOriginalFileUrl(blob)
+    const file = e.target.files[0];
+    let blob = URL.createObjectURL(file);
+    setOriginalFileUrl(blob);
   }
 
+  const getFileBase64 = (file: File): Promise<string> => new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = () => resolve(reader.result!.toString().replace(/^data:(.*,)?/, ''));
+    reader.onerror = error => reject(error);
+  });
+
   let uploadMessageKitToIPFS = async () => {
-    console.log("gateway url: ", gatewayUrl)
+    debugger;
     // need file and policy
-    if (!originalFileUrl || !policy) return
+    if (!originalFileUrl || !policy) return;
     // turn blob back to file
     let file = new File([originalFileUrl], "file");
-    let fileBase64: string | null = null;
     // get file base64
-    const reader = new FileReader();
-    reader.onloadend = () => {
-        console.log(reader.result);
-        fileBase64 = reader.result as string;
-        
-    };
-    reader.readAsDataURL(file);
+    let fileBase64: string = await getFileBase64(file)
+    
 
     let enrico = new Enrico(policy.policyKey)
-    const encryptedMessageKit = enrico.encryptMessage(toBytes(fileBase64!));
+    const encryptedMessageKit: MessageKit = enrico.encryptMessage(fileBase64);
         
     // encrypt
-    const data = JSON.stringify({
-      path: "message_kit",
-      content: encryptedMessageKit
-    })
+    // const data = JSON.stringify({
+    //   path: "message_kit",
+    //   content: encryptedMessageKit
+    // });
+    const data = toBase64(encryptedMessageKit.toBytes())
+    console.log("Generated encrypted message kit: ", data);
 
     try {
       const res = await ipfsClient.add(data);
@@ -85,20 +86,24 @@ export function App() {
   }
 
   let retrieveFile = async () => {
+    debugger;
     if (!encryptedMessageKitCid || !bob || !alice || !policy) return;
     const chunks = [];
+
+    // cat chuck from ipfs
     for await (const chuck of ipfsClient.cat(encryptedMessageKitCid)) {
       chunks.push(chuck);
     }
 
-    let encryptedMessageKit = chunks.toString();
-    console.log("Retrieved file contents:", encryptedMessageKit);
-    // convert to object 
-    let encryptedMessageKitObj = MessageKit.fromBytes(fromHexString(encryptedMessageKit));
+    // retrieve messagekit base64
+    let encryptedMessageKit: string = Buffer.concat(chunks).toString();
+    console.log("Retrieved encrypted message kit:", encryptedMessageKit);
     
+    // convert to object 
+    let encryptedMessageKitObj: MessageKit = MessageKit.fromBytes(fromBase64(encryptedMessageKit));
 
     const retrievedFile = await bob.retrieveAndDecrypt(
-        policy!.policyKey,
+        policy.policyKey,
         alice.verifyingKey,
         [encryptedMessageKitObj],
         policy.encryptedTreasureMap,
@@ -111,7 +116,7 @@ export function App() {
   }
 
   const config = {
-    // Public Porter endpoint on Ibex network
+    // Public Porter endpoint
     porterUri: 'http://127.0.0.1:80',
   }
 
@@ -132,7 +137,7 @@ export function App() {
 
   const makeRemoteBob = (bob: Bob) => {
     const { decryptingKey, verifyingKey } = bob;
-    return { decryptingKey, verifyingKey };
+    return RemoteBob.fromKeys(decryptingKey, verifyingKey);
   };
 
   const makeCharacters = () => {
@@ -144,28 +149,22 @@ export function App() {
   const getRandomLabel = () => `label-${new Date().getTime()}`;
 
   const runExample = async () => {
+    debugger;
     if (!alice || !bob) {
       return;
     }
     const remoteBob = makeRemoteBob(bob);
-    const threshold = 2;
-    const shares = 3;
-    const startDate = new Date();
-    const endDate = new Date(Date.now() + 1000 * 60 * 60 * 24 * 30); // In 30 days
-    const policyParams = {
+
+    const policyParams: BlockchainPolicyParameters = {
       bob: remoteBob,
       label: getRandomLabel(),
-      threshold,
-      shares,
-      startDate,
-      endDate,
+      threshold: 2,
+      shares: 3,
+      startDate: new Date(),
+      endDate: new Date(Date.now() + 1000 * 60 * 60 * 24 * 30),
     };
-
-    const policy = await alice.grant(
-      policyParams,
-      [],
-      []
-    );
+    
+    const policy = await alice.grant(policyParams, [], []);
 
     console.log('Policy created');
     setPolicy(policy);
@@ -207,6 +206,7 @@ export function App() {
 
           {policy && (
             <>
+              <div>Policy created</div>
               <input
                 type="file"
                 name="Asset"
