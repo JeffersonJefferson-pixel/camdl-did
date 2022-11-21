@@ -3,18 +3,13 @@ import { ethers } from 'ethers';
 import React from 'react';
 import { useEffect, useState } from 'react';
 import { create, IPFSHTTPClient } from 'ipfs-http-client';
-import { fromBase64, toBase64, toBytes, fromBytes } from './utils';
+import { fromBase64, toBase64, toHexString } from './utils';
 
 declare let window: any;
 
-function toHexString(byteArray: Uint8Array) {
-  return Array.from(byteArray, function (byte) {
-    return ('0' + (byte & 0xff).toString(16)).slice(-2);
-  }).join('');
-}
-
 export function App() {
   const [retrievedFileUrl, setRetrievedFileUrl] = useState<string | null>(null);
+  const [originalFile, setOriginalFile] = useState<File | null>(null);
   const [originalFileUrl, setOriginalFileUrl] = useState<string | null>(null);
   const [encryptedMessageKitCid, setEncryptedMessageKitCid] = useState<string | null>(null);
   const [provider, setProvider] = useState(undefined as ethers.providers.Web3Provider | undefined);
@@ -43,35 +38,31 @@ export function App() {
   let onChange = async (e: any) =>{
     // preview
     const file = e.target.files[0];
+    setOriginalFile(file);
     let blob = URL.createObjectURL(file);
     setOriginalFileUrl(blob);
   }
 
-  const getFileBase64 = (file: File): Promise<string> => new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.readAsDataURL(file);
-    reader.onload = () => resolve(reader.result!.toString().replace(/^data:(.*,)?/, ''));
-    reader.onerror = error => reject(error);
-  });
+  // const getFileBase64 = (file: File): Promise<string> => new Promise((resolve, reject) => {
+  //   const reader = new FileReader();
+  //   reader.readAsDataURL(file);
+  //   reader.onload = () => resolve(reader.result!.toString().replace(/^data:(.*,)?/, ''));
+  //   reader.onerror = error => reject(error);
+  // });
 
   let uploadMessageKitToIPFS = async () => {
-    debugger;
     // need file and policy
-    if (!originalFileUrl || !policy) return;
-    // turn blob back to file
-    let file = new File([originalFileUrl], "file");
-    // get file base64
-    let fileBase64: string = await getFileBase64(file)
-    
+    if (!originalFile || !policy) return;
+    // convert file to uint8 array
+    // let fileBase64: string = await getFileBase64(originalFile);
+    let buffer = await originalFile.arrayBuffer();
+    let fileBytes = new Uint8Array(buffer);
+    // console.log(`file base64 ${fileBase64}`);
+    // console.log("file uint8Array ", fromBase64(fileBase64));
 
-    let enrico = new Enrico(policy.policyKey)
-    const encryptedMessageKit: MessageKit = enrico.encryptMessage(fileBase64);
+    let enrico = new Enrico(policy.policyKey);
+    const encryptedMessageKit: MessageKit = enrico.encryptMessage(fileBytes);
         
-    // encrypt
-    // const data = JSON.stringify({
-    //   path: "message_kit",
-    //   content: encryptedMessageKit
-    // });
     const data = toBase64(encryptedMessageKit.toBytes())
     console.log("Generated encrypted message kit: ", data);
 
@@ -86,7 +77,6 @@ export function App() {
   }
 
   let retrieveFile = async () => {
-    debugger;
     if (!encryptedMessageKitCid || !bob || !alice || !policy) return;
     const chunks = [];
 
@@ -102,22 +92,26 @@ export function App() {
     // convert to object 
     let encryptedMessageKitObj: MessageKit = MessageKit.fromBytes(fromBase64(encryptedMessageKit));
 
-    const retrievedFile = await bob.retrieveAndDecrypt(
+    const res = (await bob.retrieveAndDecrypt(
         policy.policyKey,
         alice.verifyingKey,
         [encryptedMessageKitObj],
         policy.encryptedTreasureMap,
-    );
+    ))[0];
     
-    let retrievedFileBlob = new Blob(retrievedFile);
-    let retrievedFileUrl  =  URL.createObjectURL(retrievedFileBlob)
-    setRetrievedFileUrl(retrievedFileUrl)
+    const resBase64 = toBase64(res);
+    console.log(`res base64 ${resBase64}`);
+    
+    let retrievedFileBlob = new Blob([res], { type: 'image/png' });
 
+    let retrievedFileUrl  =  URL.createObjectURL(retrievedFileBlob);
+
+    setRetrievedFileUrl(retrievedFileUrl)
   }
 
   const config = {
     // Public Porter endpoint
-    porterUri: 'http://127.0.0.1:80',
+    porterUri: 'https://porter-tapir.nucypher.community',
   }
 
   const makeAlice = () => {
@@ -149,7 +143,6 @@ export function App() {
   const getRandomLabel = () => `label-${new Date().getTime()}`;
 
   const runExample = async () => {
-    debugger;
     if (!alice || !bob) {
       return;
     }

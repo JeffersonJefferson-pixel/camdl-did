@@ -1,0 +1,25 @@
+version: '3'
+
+services:
+  federated-porter:
+    restart: on-failure
+    image: nucypher/porter:latest
+    container_name: federated-porter
+    ports:
+      # Default Porter port
+      - "80:9155"
+    networks:
+      ursula_nucypher_net:
+        ipv4_address: 172.28.1.9
+    volumes:
+      - .:/code
+      - ~/.local/share/nucypher:/nucypher
+    command: ["nucypher-porter", "run",
+              "--eager",
+              "--federated-only",
+              "--teacher", "172.28.1.1:11500",
+              "--allow-origins", "${PORTER_CORS_ALLOW_ORIGINS}"]  # empty string if env var not defined which translates to CORS not enabled by default
+
+networks:
+  ursula_nucypher_net:
+    external: true

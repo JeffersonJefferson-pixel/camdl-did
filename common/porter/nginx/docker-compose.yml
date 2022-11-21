@@ -5,9 +5,6 @@ services:
   nginx-proxy:
     restart: always
     image: nginxproxy/nginx-proxy:alpine
-    build:
-      context: ../../..
-      dockerfile: deploy/docker/nginx/Dockerfile
     ports:
       - "443:443"
     volumes:

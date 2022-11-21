@@ -1,13 +1,10 @@
 version: '3'
 
 services:
-  porter-http:
+  unfederated-porter:
     restart: on-failure
-    image: porter:latest
-    container_name: porter-http
-    build:
-      context: ../..
-      dockerfile: deploy/docker/Dockerfile
+    image: nucypher/porter:latest
+    container_name: unfederated-porter
     ports:
       # Default Porter port
       - "80:9155"

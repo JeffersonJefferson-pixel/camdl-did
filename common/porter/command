@@ -1,0 +1,1 @@
+nucypher porter run --eth-provider https://goerli.infura.io/v3/846d74adad964fbfad4d917c747cae49 --network tapir --allow-origins "http://127.0.0.1:3000"
