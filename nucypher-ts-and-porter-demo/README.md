@@ -4,13 +4,12 @@
     1. go to `common/contract`
     2. follow the instruction there
 
-2. Up Nucypher Ursula nodes (can skip for now)
-
+2. Up Nucypher Ursula nodes
     1. go to `common/ursula`
     2. follow the instruction there
 
 
-3. Up Nucypher Porter (can skip for now)
+3. Up Nucypher Porter
 
     1. go to `common/porter`
     2. follow the instruction there
