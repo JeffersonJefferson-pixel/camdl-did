@@ -405,6 +405,18 @@
   resolved "https://registry.npmjs.org/@gar/promisify/-/promisify-1.1.3.tgz"
   integrity sha512-k2Ty1JcVojjJFwrg/ThKi2ujJ7XNLYaFGNB/bWT9wGR+oSMJHMa5w+CUq6p/pVrKeNNgA7pCqEcjSnHVoqJQFw==
 
+"@hapi/hoek@^9.0.0":
+  version "9.3.0"
+  resolved "https://registry.yarnpkg.com/@hapi/hoek/-/hoek-9.3.0.tgz#8368869dcb735be2e7f5cb7647de78e167a251fb"
+  integrity sha512-/c6rf4UJlmHlC9b5BaNvzAcFv7HZ2QHaV0D4/HNlBdvFnvQq8RI4kYdhyPCl7Xj+oWvTWQ8ujhqS53LIgAe6KQ==
+
+"@hapi/topo@^5.0.0":
+  version "5.1.0"
+  resolved "https://registry.yarnpkg.com/@hapi/topo/-/topo-5.1.0.tgz#dc448e332c6c6e37a4dc02fd84ba8d44b9afb012"
+  integrity sha512-foQZKJig7Ob0BMAYBfcJk8d77QtOe7Wo4ox7ff1lQYoNNAb6jwcY1ncdoy2e9wQZzvNy7ODZCYJkK8kzmcAnAg==
+  dependencies:
+    "@hapi/hoek" "^9.0.0"
+
 "@ipld/dag-cbor@^8.0.0":
   version "8.0.0"
   resolved "https://registry.npmjs.org/@ipld/dag-cbor/-/dag-cbor-8.0.0.tgz"
@@ -609,19 +621,18 @@
     mkdirp "^1.0.4"
     rimraf "^3.0.2"
 
-"@nucypher/nucypher-core@^0.2.0":
-  version "0.2.0"
-  resolved "https://registry.npmjs.org/@nucypher/nucypher-core/-/nucypher-core-0.2.0.tgz"
-  integrity sha512-vSSMbe4ad/Bkq5fdehSiMcflvHqLjfcCqAym+GWSiOvs/LJh4nB8Zo2/bJoMES1M1xoCjAZv4NZpPMlZiAXgzQ==
+"@nucypher/nucypher-core@0.4.0":
+  version "0.4.0"
+  resolved "https://registry.yarnpkg.com/@nucypher/nucypher-core/-/nucypher-core-0.4.0.tgz#1388abde9de61ed848959b86bc96e3d12ef97ae4"
+  integrity sha512-Pu4tRCwf7lnhZSoMjp889uTIUM7bNmYEe05TOOCuMYbJKmQWe7tYKeH0+rflUBISzGtMx2+xDe2CYYTyEGkvSw==
 
-"@nucypher/nucypher-ts@^0.7.0":
-  version "0.7.4"
-  resolved "https://registry.npmjs.org/@nucypher/nucypher-ts/-/nucypher-ts-0.7.4.tgz"
-  integrity sha512-jr1tz0oSy8g0GoqVh9cOaegyRVeUBwcbbduqe9r1iUFsF2fNwANzgHYx/VE9t848iSBDIwjb4ykglXyBksR/Uw==
+"@nucypher/nucypher-ts@file:./../common/nucypher-ts-fork/":
+  version "0.7.9-alpha.26"
   dependencies:
-    "@nucypher/nucypher-core" "^0.2.0"
+    "@nucypher/nucypher-core" "0.4.0"
     axios "^0.21.1"
     ethers "^5.4.1"
+    joi "^17.6.0"
     js-sha3 "^0.8.0"
     qs "^6.10.1"
 
@@ -697,6 +708,23 @@
   version "1.1.0"
   resolved "https://registry.npmjs.org/@protobufjs/utf8/-/utf8-1.1.0.tgz"
   integrity sha512-Vvn3zZrhQZkkBE8LSuW3em98c0FwgO4nxzv6OdSxPKJIEKY2bGbHn+mhGIPerzI4twdxaP8/0+06HBpwf345Lw==
+
+"@sideway/address@^4.1.3":
+  version "4.1.4"
+  resolved "https://registry.yarnpkg.com/@sideway/address/-/address-4.1.4.tgz#03dccebc6ea47fdc226f7d3d1ad512955d4783f0"
+  integrity sha512-7vwq+rOHVWjyXxVlR76Agnvhy8I9rpzjosTESvmhNeXOXdZZB15Fl+TI9x1SiHZH5Jv2wTGduSxFDIaq0m3DUw==
+  dependencies:
+    "@hapi/hoek" "^9.0.0"
+
+"@sideway/formula@^3.0.0":
+  version "3.0.0"
+  resolved "https://registry.yarnpkg.com/@sideway/formula/-/formula-3.0.0.tgz#fe158aee32e6bd5de85044be615bc08478a0a13c"
+  integrity sha512-vHe7wZ4NOXVfkoRb8T5otiENVlT7a3IAiw7H5M2+GO+9CDgcVUUsX1zalAztCmwyOr2RUTGJdgB+ZvSVqmdHmg==
+
+"@sideway/pinpoint@^2.0.0":
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/@sideway/pinpoint/-/pinpoint-2.0.0.tgz#cff8ffadc372ad29fd3f78277aeb29e632cc70df"
+  integrity sha512-RNiOoTPkptFtSVzQevY/yWtZwf/RxyVnPy/OcA9HBM3MlGDnBEYL5B41H0MTn0Uec8Hi+2qUtTfG2WWZBmMejQ==
 
 "@testing-library/dom@^7.28.1":
   version "7.31.2"
@@ -3241,6 +3269,17 @@ jest-worker@^27.4.5:
     "@types/node" "*"
     merge-stream "^2.0.0"
     supports-color "^8.0.0"
+
+joi@^17.6.0:
+  version "17.7.0"
+  resolved "https://registry.yarnpkg.com/joi/-/joi-17.7.0.tgz#591a33b1fe1aca2bc27f290bcad9b9c1c570a6b3"
+  integrity sha512-1/ugc8djfn93rTE3WRKdCzGGt/EtiYKxITMO4Wiv6q5JL1gl9ePt4kBsl1S499nbosspfctIQTpYIhSmHA3WAg==
+  dependencies:
+    "@hapi/hoek" "^9.0.0"
+    "@hapi/topo" "^5.0.0"
+    "@sideway/address" "^4.1.3"
+    "@sideway/formula" "^3.0.0"
+    "@sideway/pinpoint" "^2.0.0"
 
 joycon@^3.0.1:
   version "3.1.1"

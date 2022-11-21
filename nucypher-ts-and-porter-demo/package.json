@@ -9,7 +9,7 @@
     "build": "tsc --noEmit && rimraf build && webpack --mode production --progress"
   },
   "dependencies": {
-    "@nucypher/nucypher-ts": "^0.7.0",
+    "@nucypher/nucypher-ts": "file:./../common/nucypher-ts-fork/",
     "dotenv": "^16.0.3",
     "file-loader": "^6.2.0",
     "ipfs-http-client": "^59.0.0",

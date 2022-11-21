@@ -1,0 +1,138 @@
+{
+  "name": "@nucypher/nucypher-ts",
+  "author": "Piotr Roslaniec <p.roslaniec@gmail.com>",
+  "version": "0.7.9-alpha.26",
+  "license": "GPL-3.0-only",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/nucypher/nucypher-ts"
+  },
+  "main": "build/main/src/index.js",
+  "typings": "build/main/src/index.d.ts",
+  "module": "build/module/src/index.js",
+  "engines": {
+    "node": ">=12"
+  },
+  "exports": {
+    ".": {
+      "require": "./build/main/src/index.js",
+      "import": "./build/module/src/index.js"
+    }
+  },
+  "keywords": [
+    "pre",
+    "threshold",
+    "access control"
+  ],
+  "scripts": {
+    "build": "run-p build:*",
+    "build:main": "tsc -p tsconfig.json",
+    "build:module": "tsc -p tsconfig.module.json",
+    "fix": "run-s fix:*",
+    "fix:prettier": "prettier \"src/**/*.ts\" \"test/**/*.ts\" --write",
+    "fix:lint": "eslint src test --ext .ts --fix",
+    "test": "run-s build test:*",
+    "test:lint": "eslint src test --ext .ts",
+    "test:exports": "ts-unused-exports tsconfig.json --ignoreFiles src/index.ts",
+    "test:prettier": "prettier \"src/**/*.ts\" \"test/**/*.ts\" --list-different",
+    "test:unit": "jest",
+    "watch:build": "tsc -p tsconfig.json -w",
+    "watch:test": "jest --watch",
+    "cov": "run-s build test:unit && open-cli coverage/index.html",
+    "doc": "run-s doc:html && open-cli build/docs/index.html",
+    "doc:html": "typedoc src/ --exclude **/*.spec.ts --out build/docs",
+    "doc:json": "typedoc src/ --exclude **/*.spec.ts --mode file --json build/docs/typedoc.json",
+    "doc:publish": "gh-pages -m \"[ci skip] Updates\" -d build/docs",
+    "version": "standard-version",
+    "version:alpha": "standard-version --prerelease alpha",
+    "reset-hard": "git clean -dfx && git reset --hard && yarn",
+    "prepare-release": "run-s reset-hard test doc:html version doc:publish",
+    "prepare-release:alpha": "run-s reset-hard test version:alpha ",
+    "typechain": "typechain --target=ethers-v5 \"abi/**/*.json\"",
+    "prebuild": "yarn typechain"
+  },
+  "dependencies": {
+    "@nucypher/nucypher-core": "0.4.0",
+    "axios": "^0.21.1",
+    "ethers": "^5.4.1",
+    "joi": "^17.6.0",
+    "js-sha3": "^0.8.0",
+    "qs": "^6.10.1"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.18.10",
+    "@babel/preset-env": "^7.15.6",
+    "@skypack/package-check": "^0.2.2",
+    "@typechain/ethers-v5": "^9.0.0",
+    "@types/jest": "^26.0.24",
+    "@types/qs": "^6.9.7",
+    "@typescript-eslint/eslint-plugin": "^4.0.1",
+    "@typescript-eslint/parser": "^4.0.1",
+    "cz-conventional-changelog": "^3.0.1",
+    "eslint": "^7.8.0",
+    "eslint-config-prettier": "^6.11.0",
+    "eslint-plugin-eslint-comments": "^3.2.0",
+    "eslint-plugin-functional": "^3.0.2",
+    "eslint-plugin-import": "^2.22.0",
+    "gh-pages": "^3.1.0",
+    "husky": "^6.0.0",
+    "jest": "^27.0.6",
+    "npm-run-all": "^4.1.5",
+    "open-cli": "^6.0.1",
+    "prettier": "^2.1.1",
+    "standard-version": "^9.0.0",
+    "ts-jest": "^27.0.3",
+    "ts-node": "^9.0.0",
+    "ts-unused-exports": "^8.0.0",
+    "tsconfig-paths": "^3.9.0",
+    "tslib": "^2.2.0",
+    "typechain": "^7.0.0",
+    "typedoc": "^0.22.11",
+    "typedoc-plugin-missing-exports": "^0.22.6",
+    "typescript": "^4.3.2"
+  },
+  "files": [
+    "build/main",
+    "build/module",
+    "!**/*.spec.*",
+    "!**/*.json",
+    "CHANGELOG.md",
+    "LICENSE",
+    "README.md"
+  ],
+  "husky": {
+    "hooks": {
+      "pre-commit": "yarn typechain && yarn test:lint && yarn test"
+    }
+  },
+  "config": {
+    "commitizen": {
+      "path": "cz-conventional-changelog"
+    }
+  },
+  "prettier": {
+    "printWidth": 80,
+    "semi": true,
+    "singleQuote": true,
+    "trailingComma": "es5"
+  },
+  "jest": {
+    "preset": "ts-jest",
+    "testEnvironment": "node",
+    "transform": {
+      "^.+\\.js": "babel-jest"
+    },
+    "coverageReporters": [
+      "json",
+      "text",
+      "html",
+      "lcov",
+      "clover"
+    ],
+    "collectCoverage": true,
+    "coverageDirectory": "coverage",
+    "collectCoverageFrom": [
+      "src/**/*.ts"
+    ]
+  }
+}

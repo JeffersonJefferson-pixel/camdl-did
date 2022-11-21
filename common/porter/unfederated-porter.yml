@@ -3,7 +3,7 @@ version: '3'
 services:
   unfederated-porter:
     restart: on-failure
-    image: nucypher/porter:latest
+    image: nucypher/porter:lynx
     container_name: unfederated-porter
     ports:
       # Default Porter port

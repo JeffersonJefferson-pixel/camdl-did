@@ -1,0 +1,25 @@
+dependencies:
+  - OpenZeppelin/openzeppelin-contracts@4.5.0
+  - OpenZeppelin/openzeppelin-contracts-upgradeable@4.5.0
+compiler:
+  solc:
+    version: 0.8.9
+    optimizer:
+      enabled: true
+      runs: 200
+    remappings:
+      - "@openzeppelin=OpenZeppelin/openzeppelin-contracts@4.5.0"
+      - "@openzeppelin-upgradeable=OpenZeppelin/openzeppelin-contracts-upgradeable@4.5.0"
+networks:
+  default: ganache-local
+  ganache-local:
+    host: http://127.0.0.1
+    reverting_tx_gas_limit: 6721975
+    test_rpc:
+    cmd: ganache-cli
+    port: 8545
+    gas_limit: 6721975
+    accounts: 10
+    evm_version: petersburg
+    mnemonic: diagram riot engine today convince object eager slush fish another cruel buyer
+  

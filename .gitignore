@@ -7,3 +7,17 @@ None/
 .env
 
 node_modules/
+
+__pycache__
+.env
+.history
+.hypothesis/
+.tox/
+build/
+reports/
+venv/
+.python-version
+bin/
+.vscode/
+.idea/
+node_modules/

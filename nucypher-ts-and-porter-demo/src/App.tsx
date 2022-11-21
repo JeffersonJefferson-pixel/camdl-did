@@ -27,7 +27,7 @@ export function App() {
     const provider = new ethers.providers.Web3Provider(window.ethereum, 'any');
 
     const { chainId } = await provider.getNetwork();
-    if (![137, 80001].includes(chainId)) {
+    if (![1337].includes(chainId)) {
       console.error('You need to connect to the Goerli test network');
     }
 
@@ -111,7 +111,7 @@ export function App() {
 
   const config = {
     // Public Porter endpoint
-    porterUri: 'https://porter-tapir.nucypher.community',
+    porterUri: 'http://127.0.0.1:80',
   }
 
   const makeAlice = () => {

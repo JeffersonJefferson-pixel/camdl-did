@@ -3,7 +3,7 @@ version: '3'
 services:
   federated-porter:
     restart: on-failure
-    image: nucypher/porter:latest
+    image: nucypher/porter:lynx
     container_name: federated-porter
     ports:
       # Default Porter port
